@@ -138,7 +138,7 @@ def write():
     if (input_option == "Current mPower and bonded DHX"):
         col1, col2 = st.beta_columns(2)
         mPower = col1.number_input("Current mPower", value=50000.00, format="%.2f", step=1000.)
-        bonded_dhx = col2.number_input("Current bonded DHX", value=10.0000, format="%.4f", step=0.5)
+        bonded_dhx = col2.number_input("Current bonded DHX", value=4.5000, format="%.4f", step=0.5)
 
         st.markdown("### Initial calculations")
 
@@ -167,7 +167,7 @@ def write():
 
     elif (input_option == "Current bonded DHX"):
         col1, col2 = st.beta_columns(2)
-        bonded_dhx = col1.number_input("Current bonded DHX", value=10.0000, format="%.4f", step=0.5)
+        bonded_dhx = col1.number_input("Current bonded DHX", value=4.5000, format="%.4f", step=0.5)
 
         st.markdown("### Initial calculations")
 
