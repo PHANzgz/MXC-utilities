@@ -200,6 +200,9 @@ def write():
         """
         # Rewards over time
 
+        In these graphs, the left vertical axis represents the amount of DHX mined, while the right vertical
+        axis represents the $USD equivalent at current rates.
+
         """
     )
 
@@ -250,7 +253,7 @@ def write():
     # 1. DHX rewards no compounding
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.update_layout(
-        title = '<b>DHX rewards over time (No action required)<b>',
+        title = '<b>DHX rewards over time (No additional locking)<b>',
         xaxis_title="Time",
         hovermode='x unified',
         height=400, width=800)
@@ -258,9 +261,9 @@ def write():
     fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True)
 
     # Plot
-    fig.add_trace(go.Scatter(x=x_test_dates, y=mined_dhx_v, 
-                             mode='lines', name='DHX Mined'), secondary_y=False)
-    fig.add_trace(go.Scatter(x=x_test_dates, y=np.array(mined_dhx_v)*dhx_price, 
+    fig.add_trace(go.Scatter(x=x_test_dates, y=mined_dhx_v, hovertemplate='DHX: %{y:.4f} <extra></extra>',
+                             mode='lines+markers', name='DHX Mined', marker=dict(size=2) ), secondary_y=False)
+    fig.add_trace(go.Scatter(x=x_test_dates, y=np.array(mined_dhx_v)*dhx_price, hovertemplate='$%{y:.2f} <extra></extra>',
                              mode='lines', name='USD Rewards <br>@ current DHX Price'), secondary_y=True)
 
     st.plotly_chart(fig)
@@ -268,7 +271,7 @@ def write():
     # 2. Cumulative DHX rewards no compounding
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.update_layout(
-        title = '<b>Cumulative DHX rewards over time (No action required)<b>',
+        title = '<b>Cumulative DHX rewards over time (No additional locking)<b>',
         xaxis_title="Time",
         hovermode='x unified',
         height=400, width=800)
@@ -277,9 +280,9 @@ def write():
 
     # Plot
     cumulative_mined_dhx_v = np.cumsum(mined_dhx_v)
-    fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_mined_dhx_v, 
-                             mode='lines', name='Cumulative DHX Mined'), secondary_y=False)
-    fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_mined_dhx_v*dhx_price, 
+    fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_mined_dhx_v, hovertemplate='DHX: %{y:.4f} <extra></extra>',
+                             mode='lines+markers', name='Cumulative DHX Mined', marker=dict(size=2)), secondary_y=False)
+    fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_mined_dhx_v*dhx_price, hovertemplate='$%{y:.2f} <extra></extra>',
                              mode='lines', name='Cumulative USD Rewards <br>@ current DHX Price'), secondary_y=True)
 
     st.plotly_chart(fig)
@@ -306,9 +309,9 @@ def write():
         fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True)
 
         # Plot
-        fig.add_trace(go.Scatter(x=x_test_dates, y=ideal_mined_dhx_v, 
-                                mode='lines', name='DHX Mined'), secondary_y=False)
-        fig.add_trace(go.Scatter(x=x_test_dates, y=np.array(ideal_mined_dhx_v)*dhx_price, 
+        fig.add_trace(go.Scatter(x=x_test_dates, y=ideal_mined_dhx_v, hovertemplate='DHX: %{y:.4f} <extra></extra>',
+                                mode='lines+markers', name='DHX Mined', marker=dict(size=2)), secondary_y=False)
+        fig.add_trace(go.Scatter(x=x_test_dates, y=np.array(ideal_mined_dhx_v)*dhx_price, hovertemplate='$%{y:.2f} <extra></extra>',
                                 mode='lines', name='USD Rewards <br>@ current DHX Price'), secondary_y=True)
 
         st.plotly_chart(fig)
@@ -325,9 +328,9 @@ def write():
 
         # Plot
         cumulative_ideal_mined_dhx_v = np.cumsum(ideal_mined_dhx_v)
-        fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_ideal_mined_dhx_v, 
-                                mode='lines', name='Cumulative DHX Mined'), secondary_y=False)
-        fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_ideal_mined_dhx_v*dhx_price, 
+        fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_ideal_mined_dhx_v, hovertemplate='DHX: %{y:.4f} <extra></extra>', 
+                                mode='lines+markers', name='Cumulative DHX Mined', marker=dict(size=2)), secondary_y=False)
+        fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_ideal_mined_dhx_v*dhx_price, hovertemplate='$%{y:.2f} <extra></extra>', 
                                 mode='lines', name='Cumulative USD Rewards <br>@ current DHX Price'), secondary_y=True)
 
         st.plotly_chart(fig)
