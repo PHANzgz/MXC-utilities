@@ -28,7 +28,9 @@ def main():
         and open-source. If you want to support me, you can send me MXC here: 
         `0xEEBFbb5EF279dCBeAA3eEe505d1CefBA040FFD5a`  
         
-        You can find the source and contribute [here](https://github.com/PHANzgz/MXC-utilities).
+        You can find the source and contribute [here](https://github.com/PHANzgz/MXC-utilities).  
+        
+        Special thanks to @Midir21 on Telegram for the amazing spreadsheet this web-app is based.
         """
         )
 
