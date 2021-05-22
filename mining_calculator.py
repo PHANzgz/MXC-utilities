@@ -238,7 +238,7 @@ def write():
         additional_mxc_to_lock_placeholder.markdown("> Additional MXC to lock for full day 0 earnings: **`{:.3f}` MXC** (${:.2f})"
                                                     .format(additional_mxc_to_lock_v[0], additional_mxc_to_lock_v[0]*mxc_price))
         additional_dhx_to_bond_placeholder.markdown("> Additional DHX to bond for full day 0 earnings: **`{:.4f}` DHX** (${:.2f})"
-                                                    .format(additional_dhx_to_bond_v[0], additional_mxc_to_lock_v[0]*dhx_price))
+                                                    .format(additional_dhx_to_bond_v[0], additional_dhx_to_bond_v[0]*dhx_price))
 
     # Plotting
 
