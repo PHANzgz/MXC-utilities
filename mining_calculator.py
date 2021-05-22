@@ -51,7 +51,9 @@ def write():
             
             """)
 
-        exp_gain = st.slider("Exponential growth gain", 0.4, 1.6, value=0.8, step=0.05)
+        col1, col2 = st.beta_columns(2)
+        exp_gain = col1.slider("Exponential growth gain", 0.1, 2.0, value=0.6, step=0.05)
+        prop_gain = col2.slider("Proportional growth gain", 0.1, 2.0, value=1.40, step=0.05)
 
         # Train data
         with open("total_mpower_from_apr17.txt") as f:
@@ -65,6 +67,7 @@ def write():
 
         weights = np.linspace(1, 0.01, n_samples) # Give more importance to recent samples
         model_params, _ = curve_fit(exp_regression, X_train, y_train, p0=(1,0.02), sigma = weights)
+        model_params[0] *= prop_gain
         model_params[1] *= exp_gain # apply gain
 
         # Predictions
