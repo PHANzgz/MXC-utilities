@@ -281,93 +281,94 @@ def write():
 
     st.plotly_chart(fig)
 
-    st.markdown("# Potential rewards over time")
-    st.error("""
-        ** Note: this feature is under development and currently only works for very small periods, which means it's accurate for the
-        first few days but WAY off for periods longer than a week. **
-        """)
-    st.info("""  
-            Below are the graphs that show **potential** rewards if you keep locking MXC or bonding DHX for maximum profits.  
+    with st.beta_expander("Show experimental features: Maximizing earnings to keep all your DHX fueled providing mPower"):
+        st.markdown("# Potential rewards over time")
+        st.error("""
+            ** Note: this feature is under development and currently only works for very small periods, which means it's accurate for the
+            first few days but WAY off for periods longer than a week. **
+            """)
+        st.info("""  
+                Below are the graphs that show **potential** rewards if you keep locking MXC or bonding DHX for maximum profits.  
+                **Keep in mind that for periods longer than two weeks it becomes really unsustainable to keep compounding.**
+                """)
+
+        # 3. DHX rewards WITH compounding
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+        fig.update_layout(
+            title = '<b>DHX rewards over time (Requires additional mPower)<b>',
+            xaxis_title="Time",
+            hovermode='x unified',
+            height=400, width=800)
+        fig.update_yaxes(title_text="<b>DHX Mined</b>", secondary_y=False)
+        fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True)
+
+        # Plot
+        fig.add_trace(go.Scatter(x=x_test_dates, y=ideal_mined_dhx_v, 
+                                mode='lines', name='DHX Mined'), secondary_y=False)
+        fig.add_trace(go.Scatter(x=x_test_dates, y=np.array(ideal_mined_dhx_v)*dhx_price, 
+                                mode='lines', name='USD Rewards <br>@ current DHX Price'), secondary_y=True)
+
+        st.plotly_chart(fig)
+
+        # 4. Cumulative DHX rewards WITH compounding
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+        fig.update_layout(
+            title = '<b>Cumulative DHX rewards over time (Requires additional mPower)<b>',
+            xaxis_title="Time",
+            hovermode='x unified',
+            height=400, width=800)
+        fig.update_yaxes(title_text="<b>Cumulative DHX Mined</b>", secondary_y=False)
+        fig.update_yaxes(title_text="<b>Cumulative USD Equivalent</b> ", secondary_y=True)
+
+        # Plot
+        cumulative_ideal_mined_dhx_v = np.cumsum(ideal_mined_dhx_v)
+        fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_ideal_mined_dhx_v, 
+                                mode='lines', name='Cumulative DHX Mined'), secondary_y=False)
+        fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_ideal_mined_dhx_v*dhx_price, 
+                                mode='lines', name='Cumulative USD Rewards <br>@ current DHX Price'), secondary_y=True)
+
+        st.plotly_chart(fig)
+
+        st.markdown("# How to maximize rewards")
+        st.error("""
+            ** Note: this feature is under development and currently only works for very small periods, which means it's accurate for the
+            first few days but WAY off for periods longer than a week. **
+            """)
+        st.info("""
+            To maximize your earnings you will need to keep accumulating mPower. This is compounded interest.  
             **Keep in mind that for periods longer than two weeks it becomes really unsustainable to keep compounding.**
             """)
 
-    # 3. DHX rewards WITH compounding
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
-    fig.update_layout(
-        title = '<b>DHX rewards over time (Requires additional mPower)<b>',
-        xaxis_title="Time",
-        hovermode='x unified',
-        height=400, width=800)
-    fig.update_yaxes(title_text="<b>DHX Mined</b>", secondary_y=False)
-    fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True)
+        # 5. Additional MXC to lock
+        fig = go.Figure()
+        fig.update_layout(
+            title = 'Cumulative additional MXC to lock',
+            xaxis_title="Time",
+            yaxis_title="<b>MXC<b>",
+            hovermode='x unified',
+            height=400, width=800)
 
-    # Plot
-    fig.add_trace(go.Scatter(x=x_test_dates, y=ideal_mined_dhx_v, 
-                             mode='lines', name='DHX Mined'), secondary_y=False)
-    fig.add_trace(go.Scatter(x=x_test_dates, y=np.array(ideal_mined_dhx_v)*dhx_price, 
-                             mode='lines', name='USD Rewards <br>@ current DHX Price'), secondary_y=True)
+        # Plot
+        
+        x_test_dates = np.arange(start_day, end_day)
+        fig.add_trace(go.Scatter(x=x_test_dates, y=additional_mxc_to_lock_v, 
+                                mode='lines', name='<b>MXC to lock<b>', hovertemplate = 'MXC: %{y}<extra></extra>'))
 
-    st.plotly_chart(fig)
+        st.plotly_chart(fig)
 
-    # 4. Cumulative DHX rewards WITH compounding
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
-    fig.update_layout(
-        title = '<b>Cumulative DHX rewards over time (Requires additional mPower)<b>',
-        xaxis_title="Time",
-        hovermode='x unified',
-        height=400, width=800)
-    fig.update_yaxes(title_text="<b>Cumulative DHX Mined</b>", secondary_y=False)
-    fig.update_yaxes(title_text="<b>Cumulative USD Equivalent</b> ", secondary_y=True)
+        # 6. Additional DHX to bond
+        fig = go.Figure()
+        fig.update_layout(
+            title = 'Cumulative additional DHX to bond',
+            xaxis_title="Time",
+            yaxis_title="<b>DHX<b>",
+            hovermode='x unified',
+            height=400, width=800)
 
-    # Plot
-    cumulative_ideal_mined_dhx_v = np.cumsum(ideal_mined_dhx_v)
-    fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_ideal_mined_dhx_v, 
-                             mode='lines', name='Cumulative DHX Mined'), secondary_y=False)
-    fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_ideal_mined_dhx_v*dhx_price, 
-                             mode='lines', name='Cumulative USD Rewards <br>@ current DHX Price'), secondary_y=True)
+        # Plot
+        
+        x_test_dates = np.arange(start_day, end_day)
+        fig.add_trace(go.Scatter(x=x_test_dates, y=additional_dhx_to_bond_v, 
+                                mode='lines', name='<b>MXC to lock<b>', hovertemplate = 'DHX: %{y}<extra></extra>'))
 
-    st.plotly_chart(fig)
-
-    st.markdown("# How to maximize rewards")
-    st.error("""
-        ** Note: this feature is under development and currently only works for very small periods, which means it's accurate for the
-        first few days but WAY off for periods longer than a week. **
-        """)
-    st.info("""
-        To maximize your earnings you will need to keep accumulating mPower. This is compounded interest.  
-        **Keep in mind that for periods longer than two weeks it becomes really unsustainable to keep compounding.**
-        """)
-
-    # 5. Additional MXC to lock
-    fig = go.Figure()
-    fig.update_layout(
-        title = 'Cumulative additional MXC to lock',
-        xaxis_title="Time",
-        yaxis_title="<b>MXC<b>",
-        hovermode='x unified',
-        height=400, width=800)
-
-    # Plot
-    
-    x_test_dates = np.arange(start_day, end_day)
-    fig.add_trace(go.Scatter(x=x_test_dates, y=additional_mxc_to_lock_v, 
-                             mode='lines', name='<b>MXC to lock<b>', hovertemplate = 'MXC: %{y}<extra></extra>'))
-
-    st.plotly_chart(fig)
-
-    # 6. Additional DHX to bond
-    fig = go.Figure()
-    fig.update_layout(
-        title = 'Cumulative additional DHX to bond',
-        xaxis_title="Time",
-        yaxis_title="<b>DHX<b>",
-        hovermode='x unified',
-        height=400, width=800)
-
-    # Plot
-    
-    x_test_dates = np.arange(start_day, end_day)
-    fig.add_trace(go.Scatter(x=x_test_dates, y=additional_dhx_to_bond_v, 
-                             mode='lines', name='<b>MXC to lock<b>', hovertemplate = 'DHX: %{y}<extra></extra>'))
-
-    st.plotly_chart(fig)
+        st.plotly_chart(fig)
