@@ -34,7 +34,7 @@ def write():
     st.markdown("## Date selection")
     today = dt.date.today()
     col1, col2 = st.beta_columns(2)
-    start_day = col1.date_input("Start day", value=dt.date(2021, 5, 10), min_value=INIT_DAY)
+    start_day = col1.date_input("Start day", value=dt.date.today(), min_value=INIT_DAY)
     end_day = col2.date_input("End day", value=today+dt.timedelta(days=60), min_value=today+dt.timedelta(days=1))
     
     delta_days = (end_day - start_day).days
@@ -51,7 +51,7 @@ def write():
             
             """)
 
-        exp_gain = st.slider("Exponential growth gain", 0.5, 1.5, value=1.0, step=0.05)
+        exp_gain = st.slider("Exponential growth gain", 0.4, 1.6, value=0.8, step=0.05)
 
         # Train data
         with open("total_mpower_from_apr17.txt") as f:
@@ -218,7 +218,7 @@ def write():
         fueled_dhx_i = mPower / mpower_per_dhx_i
 
         # Mined DHX
-        ideal_mined_dhx_i = bonded_dhx_i / 70
+        ideal_mined_dhx_i = min(bonded_dhx_i / 70, 5000)
         ideal_mined_dhx_v.append(ideal_mined_dhx_i)
 
         mined_dhx_i = min(fueled_dhx_i/70, ideal_mined_dhx_i)
