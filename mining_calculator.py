@@ -225,7 +225,7 @@ def write():
         mined_dhx_v.append(mined_dhx_i)
 
         # Additional MXC to lock
-        additional_mxc_to_lock_i = max(0, (bonded_dhx_i*mpower_per_dhx_i - mPower) / total_boost_rate)
+        additional_mxc_to_lock_i = min(max(0, (bonded_dhx_i*mpower_per_dhx_i - mPower) / total_boost_rate), 5000*mpower_per_dhx_i)
         additional_mxc_to_lock_v.append(additional_mxc_to_lock_i)
 
         # Additional DHX to bond
@@ -281,6 +281,7 @@ def write():
 
     st.markdown("# Potential rewards over time")
     st.info("""
+            ** EXPERIMENTAL, this feature is under development an currently only works for small periods **
             Below are the graphs that show **potential** rewards if you keep locking MXC or bonding DHX for maximum profits.  
             **Keep in mind that for periods longer than two weeks it becomes really unsustainable to keep compounding.**
             """)
@@ -288,7 +289,7 @@ def write():
     # 3. DHX rewards WITH compounding
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.update_layout(
-        title = '<b>DHX rewards over time (Additional locking/bonding required)<b>',
+        title = '<b>DHX rewards over time (Additional mPower required)<b>',
         xaxis_title="Time",
         hovermode='x unified',
         height=400, width=800)
@@ -306,7 +307,7 @@ def write():
     # 4. Cumulative DHX rewards WITH compounding
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.update_layout(
-        title = '<b>Cumulative DHX rewards over time (Additional locking/bonding required)<b>',
+        title = '<b>Cumulative DHX rewards over time (Additional mPower required)<b>',
         xaxis_title="Time",
         hovermode='x unified',
         height=400, width=800)
