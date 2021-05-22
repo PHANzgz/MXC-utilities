@@ -35,7 +35,7 @@ def write():
     today = dt.date.today()
     col1, col2 = st.beta_columns(2)
     start_day = col1.date_input("Start day", value=dt.date(2021, 5, 10), min_value=INIT_DAY)
-    end_day = col2.date_input("End day", value=today+dt.timedelta(days=90), min_value=today+dt.timedelta(days=1))
+    end_day = col2.date_input("End day", value=today+dt.timedelta(days=60), min_value=today+dt.timedelta(days=1))
     
     delta_days = (end_day - start_day).days
 
@@ -137,8 +137,8 @@ def write():
     st.markdown("### Your data")
     if (input_option == "Current mPower and bonded DHX"):
         col1, col2 = st.beta_columns(2)
-        mPower = col1.number_input("Current mPower", value=100000.00, format="%.2f", step=1000.)
-        bonded_dhx = col2.number_input("Current bonded DHX", value=20.0000, format="%.4f", step=0.5)
+        mPower = col1.number_input("Current mPower", value=50000.00, format="%.2f", step=1000.)
+        bonded_dhx = col2.number_input("Current bonded DHX", value=10.0000, format="%.4f", step=0.5)
 
         st.markdown("### Initial calculations")
 
@@ -167,7 +167,7 @@ def write():
 
     elif (input_option == "Current bonded DHX"):
         col1, col2 = st.beta_columns(2)
-        bonded_dhx = col1.number_input("Current bonded DHX", value=20.0000, format="%.4f", step=0.5)
+        bonded_dhx = col1.number_input("Current bonded DHX", value=10.0000, format="%.4f", step=0.5)
 
         st.markdown("### Initial calculations")
 
