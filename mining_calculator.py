@@ -218,15 +218,17 @@ def write():
         fueled_dhx_i = mPower / mpower_per_dhx_i
 
         # Mined DHX
-        ideal_mined_dhx_i = min(bonded_dhx_i / 70, 5000)
-        ideal_mined_dhx_v.append(ideal_mined_dhx_i)
-
-        mined_dhx_i = min(fueled_dhx_i/70, ideal_mined_dhx_i)
+        mined_dhx_i = min(fueled_dhx_i/70, bonded_dhx_i/70)
         mined_dhx_v.append(mined_dhx_i)
 
         # Additional MXC to lock
+        self_growth = 1.# Network growth produced by yourself
         additional_mxc_to_lock_i = min(max(0, (bonded_dhx_i*mpower_per_dhx_i - mPower) / total_boost_rate), 5000*mpower_per_dhx_i)
         additional_mxc_to_lock_v.append(additional_mxc_to_lock_i)
+
+        # Ideal mined DHX
+        ideal_mined_dhx_i = min(bonded_dhx_i / 70, 5000)
+        ideal_mined_dhx_v.append(ideal_mined_dhx_i)
 
         # Additional DHX to bond
         additional_dhx_to_bond_i = max(0, fueled_dhx_i - bonded_dhx_i )
@@ -280,8 +282,11 @@ def write():
     st.plotly_chart(fig)
 
     st.markdown("# Potential rewards over time")
-    st.info("""
-            ** EXPERIMENTAL, this feature is under development an currently only works for small periods **
+    st.error("""
+        ** Note: this feature is under development and currently only works for very small periods, which means it's accurate for the
+        first few days but WAY off for periods longer than a week. **
+        """)
+    st.info("""  
             Below are the graphs that show **potential** rewards if you keep locking MXC or bonding DHX for maximum profits.  
             **Keep in mind that for periods longer than two weeks it becomes really unsustainable to keep compounding.**
             """)
@@ -289,7 +294,7 @@ def write():
     # 3. DHX rewards WITH compounding
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.update_layout(
-        title = '<b>DHX rewards over time (Additional mPower required)<b>',
+        title = '<b>DHX rewards over time (Requires additional mPower)<b>',
         xaxis_title="Time",
         hovermode='x unified',
         height=400, width=800)
@@ -307,7 +312,7 @@ def write():
     # 4. Cumulative DHX rewards WITH compounding
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.update_layout(
-        title = '<b>Cumulative DHX rewards over time (Additional mPower required)<b>',
+        title = '<b>Cumulative DHX rewards over time (Requires additional mPower)<b>',
         xaxis_title="Time",
         hovermode='x unified',
         height=400, width=800)
@@ -324,6 +329,10 @@ def write():
     st.plotly_chart(fig)
 
     st.markdown("# How to maximize rewards")
+    st.error("""
+        ** Note: this feature is under development and currently only works for very small periods, which means it's accurate for the
+        first few days but WAY off for periods longer than a week. **
+        """)
     st.info("""
         To maximize your earnings you will need to keep accumulating mPower. This is compounded interest.  
         **Keep in mind that for periods longer than two weeks it becomes really unsustainable to keep compounding.**
