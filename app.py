@@ -3,9 +3,10 @@ import streamlit as st
 # Load pages
 import mining_calculator
 import mining_tutorial
+import next_steps
 
-PAGE_NAMES = ["Mining calculator", "Mining guide"]
-PAGE_SRCS = [mining_calculator, mining_tutorial]
+PAGE_NAMES = ["Mining calculator", "Mining guide", "Next steps"]
+PAGE_SRCS = [mining_calculator, mining_tutorial, next_steps]
 
 
 def main():

@@ -1,3 +1,4 @@
+from operator import add
 import streamlit as st
 import os
 from scipy.optimize import curve_fit
@@ -5,6 +6,7 @@ import datetime as dt
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import sys
 
 INIT_DAY = dt.date(2021, 4, 17)
 
@@ -114,6 +116,8 @@ def write():
         Having an M2 Pro miner boosts mPower by 100%
         """)
     has_miner = col1.checkbox("I have an M2 Pro miner or more")
+    if has_miner:
+        n_miners = col1.number_input(label="How many miners do you own?", value=1, min_value=1, step=1)
 
     col2.markdown(
         """
@@ -155,15 +159,36 @@ def write():
         col1, col2 = st.beta_columns(2)
         investment = col1.number_input("Desired investment ($)", value=5000.00, format="%.2f", step=100.)
 
+        #with st.beta_expander("Show advanced settings"):
+        #    col1, col2 = st.beta_columns(2)
+        #    current_dhx = col1.number_input("Do you already own some DHX?", value=0.00, format="%.4f", min_value=0., step=0.1)
+        #    current_mxc = col2.number_input("Do you already own some MXC?", value=0.00, format="%.2f", min_value=0., step=1000.)
+
         st.markdown("### Initial calculations")
 
+        #offset_dhx_to_buy = current_dhx*dhx_price + current_mxc*mxc_price + current_dhx*discounted_mpower_per_dhx[0]*mxc_price
+        #dhx_to_buy = ((investment) / ((discounted_mpower_per_dhx[0]*mxc_price)+dhx_price))
+        #bonded_dhx = dhx_to_buy + current_dhx
+        #mxc_to_buy = dhx_to_buy * discounted_mpower_per_dhx[0]
+        
         bonded_dhx = dhx_to_buy = investment / ((discounted_mpower_per_dhx[0]*mxc_price)+dhx_price)
-        mxc_to_buy = dhx_to_buy * discounted_mpower_per_dhx[0]
+        mxc_to_buy = bonded_dhx * discounted_mpower_per_dhx[0]
 
-        st.markdown("> Initial MXC to buy: **`{:.3f}` MXC** (${:.2f})".format(mxc_to_buy, mxc_to_buy*mxc_price))
-        st.markdown("> Initial DHX to buy: **`{:.3f}` DHX** (${:.2f})".format(dhx_to_buy, dhx_to_buy*dhx_price))
+        #if (current_dhx > 0) or (current_mxc > 0):
+        #    st.markdown("> Total MXC after investment: `{:.2f}` MXC".format(mxc_to_buy+current_mxc))
+        #    st.markdown("> Total DHX after investment: `{:.4f}` DHX".format(dhx_to_buy+current_dhx))
+
+        st.markdown("> Initial MXC to buy: **`{:.2f}` MXC** (${:.2f})".format(mxc_to_buy, mxc_to_buy*mxc_price))
+        st.markdown("> Initial DHX to buy: **`{:.4f}` DHX** (${:.2f})".format(dhx_to_buy, dhx_to_buy*dhx_price))
 
         mPower = mxc_to_buy * total_boost_rate
+
+        # Miner limit 1 million mPower
+        if (n_miners*(10**6) > mPower):
+            # Nerf mPower and adjust values
+            pass
+            
+
         st.markdown("> mPower: **`{:.3f}`**".format(mPower))
 
         st.markdown("> ## **Initial DHX mined per day: `{:.3f}` (${:.2f}) **".format(dhx_to_buy/70, dhx_price*dhx_to_buy/70))
@@ -218,18 +243,35 @@ def write():
     for i, mpower_per_dhx_i in enumerate(mpower_per_dhx):
 
         if (i > 6): # Mined DHX gets automatically bonded after 7 days
-            bonded_dhx_i += bonded_dhx_v[i - 7]
+            bonded_dhx_i += bonded_dhx_v[i - 7] / 70 # Theoretically, only if max rewards
         bonded_dhx_v.append(bonded_dhx_i) # keep track of bonded dhx
 
         fueled_dhx_i = mPower / mpower_per_dhx_i
+
+        # Calculate additional mPower required
+        # Network growth produced by yourself if you were to provide the necessary mPower for compounding
+        aux_mpower_per_dhx_i = mpower_per_dhx_i
+        accumulated_mpower_needed = mPower
+        additional_mpower_needed = sys.float_info.max
+
+        # While the additional mpower needed is bigger than 1 percent of the network size
+        #j=0
+        while(additional_mpower_needed > (aux_mpower_per_dhx_i*35000 / 100) ):
+            additional_mpower_needed = bonded_dhx_i*aux_mpower_per_dhx_i - accumulated_mpower_needed
+            aux_mpower_per_dhx_i += (additional_mpower_needed / 35000)
+            accumulated_mpower_needed += additional_mpower_needed
+            #j +=1
+
+        #print("{:d} iterations were needed to converge for self-growth".format(j))
+        additional_mpower_i = accumulated_mpower_needed - mPower
+
+        #additional_mpower_i = bonded_dhx_i*mpower_per_dhx_i - mPower # SIMPLE WAY, NO SELF GROWTH
 
         # Mined DHX
         mined_dhx_i = min(fueled_dhx_i/70, bonded_dhx_i/70)
         mined_dhx_v.append(mined_dhx_i)
 
-        # Additional MXC to lock
-        self_growth = 1.# Network growth produced by yourself
-        additional_mxc_to_lock_i = min(max(0, (bonded_dhx_i*mpower_per_dhx_i - mPower) / total_boost_rate), 5000*mpower_per_dhx_i)
+        additional_mxc_to_lock_i = min(max(0, (additional_mpower_i) / total_boost_rate), 5000*mpower_per_dhx_i)
         additional_mxc_to_lock_v.append(additional_mxc_to_lock_i)
 
         # Ideal mined DHX
@@ -257,7 +299,7 @@ def write():
         xaxis_title="Time",
         hovermode='x unified',
         height=400, width=800)
-    fig.update_yaxes(title_text="<b>DHX Mined</b>", secondary_y=False)
+    fig.update_yaxes(title_text="<b>DHX Mined per day</b>", secondary_y=False)
     fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True)
 
     # Plot
@@ -290,8 +332,9 @@ def write():
     with st.beta_expander("Show experimental features: Maximizing earnings to keep all your DHX fueled providing mPower"):
         st.markdown("# Potential rewards over time")
         st.error("""
-            ** Note: this feature is under development and currently only works for very small periods, which means it's accurate for the
-            first few days but WAY off for periods longer than a week. **
+            ** Note: this feature is under development and it is in experimental state. It may not be accurate.
+               For starters, it does not (yet) take into account that each miners boosts up to 1 million mPower.
+            **
             """)
         st.info("""  
                 Below are the graphs that show **potential** rewards if you keep locking MXC or bonding DHX for maximum profits.  
@@ -305,7 +348,7 @@ def write():
             xaxis_title="Time",
             hovermode='x unified',
             height=400, width=800)
-        fig.update_yaxes(title_text="<b>DHX Mined</b>", secondary_y=False)
+        fig.update_yaxes(title_text="<b>DHX Mined per day</b>", secondary_y=False)
         fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True)
 
         # Plot
@@ -337,8 +380,9 @@ def write():
 
         st.markdown("# How to maximize rewards")
         st.error("""
-            ** Note: this feature is under development and currently only works for very small periods, which means it's accurate for the
-            first few days but WAY off for periods longer than a week. **
+            ** Note: this feature is under development and it is in experimental state. It may not be accurate.
+               For starters, it does not (yet) take into account that each miners boosts up to 1 million mPower.
+            **
             """)
         st.info("""
             To maximize your earnings you will need to keep accumulating mPower. This is compounded interest.  
