@@ -30,8 +30,8 @@ def write():
         in the corresponding boxes. In a future update, the default values will be updated automatically.
         """)
     col1, col2 = st.beta_columns(2)
-    mxc_price = col1.number_input("MXC Price ($)", value=0.03, format="%.4f", step=0.001)
-    dhx_price = col2.number_input("DHX Price ($)", value=100.00, format="%.3f", step=1.)
+    mxc_price = col1.number_input("MXC Price ($)", value=0.02, format="%.4f", step=0.001)
+    dhx_price = col2.number_input("DHX Price ($)", value=70.00, format="%.3f", step=1.)
 
     st.markdown("## Date selection")
     today = dt.date.today()
@@ -145,6 +145,13 @@ def write():
     if (input_option == "Current mPower and bonded DHX"):
         col1, col2 = st.beta_columns(2)
         mPower = col1.number_input("Current mPower", value=50000.00, format="%.2f", step=1000.)
+        if has_miner:
+            col1.markdown("""
+                To factor the MXC boosted per miner limit and estimate future "re-locks" please specify how
+                much MXC you have locked.
+                """)
+            locked_mxc = col1.number_input("MXC currently locked", min_value=0., value=0., step=1000.)
+
         bonded_dhx = col2.number_input("Current bonded DHX", value=4.5000, format="%.4f", step=0.5)
 
         st.markdown("### Initial calculations")
@@ -172,8 +179,8 @@ def write():
         #mxc_to_buy = dhx_to_buy * discounted_mpower_per_dhx[0]
         
         bonded_dhx = dhx_to_buy = investment / ((discounted_mpower_per_dhx[0]*mxc_price)+dhx_price)
-        mxc_to_buy = bonded_dhx * discounted_mpower_per_dhx[0]
-
+        locked_mxc = mxc_to_buy = bonded_dhx * discounted_mpower_per_dhx[0]
+        
         #if (current_dhx > 0) or (current_mxc > 0):
         #    st.markdown("> Total MXC after investment: `{:.2f}` MXC".format(mxc_to_buy+current_mxc))
         #    st.markdown("> Total DHX after investment: `{:.4f}` DHX".format(dhx_to_buy+current_dhx))
@@ -199,7 +206,7 @@ def write():
 
         st.markdown("### Initial calculations")
 
-        mxc_to_buy = bonded_dhx * discounted_mpower_per_dhx[0]
+        locked_mxc = mxc_to_buy = bonded_dhx * discounted_mpower_per_dhx[0]
 
         st.markdown("> Initial MXC to buy: **`{:.3f}` MXC** (${:.2f})".format(mxc_to_buy, mxc_to_buy*mxc_price))
         mPower = mxc_to_buy * total_boost_rate
@@ -240,7 +247,9 @@ def write():
     ideal_mined_dhx_v = []
     additional_mxc_to_lock_v = []
     additional_dhx_to_bond_v = []
-    print("-"*50)
+    print("-"*200)
+    print("-"*200)
+    print("-"*200)
     for i, mpower_per_dhx_i in enumerate(mpower_per_dhx):
 
         if (i > 6): # Mined DHX gets automatically bonded after 7 days
@@ -274,15 +283,21 @@ def write():
 
         # Additional MXC to lock
         if has_miner:
-            bonus_mpower_left = max(0, (10**6)*n_miners - mPower - additional_mpower_i)
-            print("bonus_mpower_left", bonus_mpower_left, "additional_mpower_i", additional_mpower_i)
-            
-            discounted_mxc_to_lock = bonus_mpower_left / total_boost_rate
-            raw_mxc_to_lock = (additional_mpower_i - bonus_mpower_left) / (1+lock_bonus)
-            mxc_to_lock = discounted_mxc_to_lock + raw_mxc_to_lock
+            boostable_mxc_left = max(0, (10**6)*n_miners - locked_mxc)
+            mpower_from_boosted_mxc = boostable_mxc_left * total_boost_rate
 
-        #additional_mxc_to_lock_i = min(max(0, mxc_to_lock), 5000*mpower_per_dhx_i)
-        additional_mxc_to_lock_i = min(max(0, (additional_mpower_i) / total_boost_rate), 5000*mpower_per_dhx_i)
+            if (additional_mpower_i < mpower_from_boosted_mxc): # enough boostable MXC to cover mPower needs
+                additional_mxc_to_lock_i = min(max(0, (additional_mpower_i) / total_boost_rate), 5000*mpower_per_dhx_i)
+            else:
+                # We have to account for the boosted and non-boosted portions
+                additional_mxc_to_lock_non_boosted = min( (additional_mpower_i-mpower_from_boosted_mxc) / (1+lock_bonus), 5000*mpower_per_dhx_i)
+                additional_mxc_to_lock_i = boostable_mxc_left + additional_mxc_to_lock_non_boosted
+                pass
+
+        else:
+            additional_mxc_to_lock_i = min(max(0, (additional_mpower_i) / total_boost_rate), 5000*mpower_per_dhx_i)
+        
+        #additional_mxc_to_lock_i = min(max(0, (additional_mpower_i) / total_boost_rate), 5000*mpower_per_dhx_i)
         additional_mxc_to_lock_v.append(additional_mxc_to_lock_i)
 
         # Ideal mined DHX
@@ -344,12 +359,10 @@ def write():
         st.markdown("# Potential rewards over time")
         st.error("""
             ** Note: this feature is under development and it is in experimental state. It may not be accurate.
-               For starters, it does not (yet) take into account that each miners boosts up to 1 million mPower.
             **
             """)
         st.info("""  
-                Below are the graphs that show **potential** rewards if you keep locking MXC or bonding DHX for maximum profits.  
-                **Keep in mind that for periods longer than two weeks it becomes really unsustainable to keep compounding.**
+                Below are the graphs that show **potential** rewards if you keep locking MXC or bonding DHX for maximum profits.
                 """)
 
         # 3. DHX rewards WITH compounding
@@ -392,12 +405,10 @@ def write():
         st.markdown("# How to maximize rewards")
         st.error("""
             ** Note: this feature is under development and it is in experimental state. It may not be accurate.
-               For starters, it does not (yet) take into account that each miners boosts up to 1 million mPower.
             **
             """)
         st.info("""
-            To maximize your earnings you will need to keep accumulating mPower. This is compounded interest.  
-            **Keep in mind that for periods longer than two weeks it becomes really unsustainable to keep compounding.**
+            To maximize your earnings you will need to keep accumulating mPower. This is compounded interest.
             """)
 
         # 5. Additional MXC to lock

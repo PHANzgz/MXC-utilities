@@ -26,12 +26,13 @@ def main():
     st.sidebar.info(
         """
         This calculator was created by PHAN to help the community and it is ad-free
-        and open-source. If you want to support me, you can send me MXC here: 
+        and open-source. If you want to support me, you can send me a tip(ETH, MXC) here: 
         `0xEEBFbb5EF279dCBeAA3eEe505d1CefBA040FFD5a`  
         
         You can find the source and contribute [here](https://github.com/PHANzgz/MXC-utilities).  
         
-        Special thanks to @Midir21 on Telegram for the amazing spreadsheet this web-app is based.
+        Special thanks to @Midir21, @TavernSideGaming and @Mlazear who have actively or passively
+        contributed to the project.
         """
         )
 
