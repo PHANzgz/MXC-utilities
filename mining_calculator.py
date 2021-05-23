@@ -234,17 +234,18 @@ def write():
 
     # TODO Vectorize all this, current implementation is very suboptimal
 
-    bonded_dhx_i = bonded_dhx
-    bonded_dhx_v = []
+    ideal_bonded_dhx_i = bonded_dhx
+    ideal_bonded_dhx_v = []
     mined_dhx_v = []
     ideal_mined_dhx_v = []
     additional_mxc_to_lock_v = []
     additional_dhx_to_bond_v = []
+    print("-"*50)
     for i, mpower_per_dhx_i in enumerate(mpower_per_dhx):
 
         if (i > 6): # Mined DHX gets automatically bonded after 7 days
-            bonded_dhx_i += bonded_dhx_v[i - 7] / 70 # Theoretically, only if max rewards
-        bonded_dhx_v.append(bonded_dhx_i) # keep track of bonded dhx
+            ideal_bonded_dhx_i += ideal_bonded_dhx_v[i - 7] / 70 # Theoretically, only if max rewards
+        ideal_bonded_dhx_v.append(ideal_bonded_dhx_i) # keep track of bonded dhx
 
         fueled_dhx_i = mPower / mpower_per_dhx_i
 
@@ -257,29 +258,39 @@ def write():
         # While the additional mpower needed is bigger than 1 percent of the network size
         #j=0
         while(additional_mpower_needed > (aux_mpower_per_dhx_i*35000 / 100) ):
-            additional_mpower_needed = bonded_dhx_i*aux_mpower_per_dhx_i - accumulated_mpower_needed
+            additional_mpower_needed = ideal_bonded_dhx_i*aux_mpower_per_dhx_i - accumulated_mpower_needed
             aux_mpower_per_dhx_i += (additional_mpower_needed / 35000)
             accumulated_mpower_needed += additional_mpower_needed
             #j +=1
 
         #print("{:d} iterations were needed to converge for self-growth".format(j))
-        additional_mpower_i = accumulated_mpower_needed - mPower
+        additional_mpower_i = max(0, accumulated_mpower_needed - mPower)
+        #additional_mpower_i = ideal_bonded_dhx_i*mpower_per_dhx_i - mPower # SIMPLE WAY, NO SELF GROWTH
 
-        #additional_mpower_i = bonded_dhx_i*mpower_per_dhx_i - mPower # SIMPLE WAY, NO SELF GROWTH
 
         # Mined DHX
-        mined_dhx_i = min(fueled_dhx_i/70, bonded_dhx_i/70)
+        mined_dhx_i = min(fueled_dhx_i/70, ideal_bonded_dhx_i/70, 5000)
         mined_dhx_v.append(mined_dhx_i)
 
+        # Additional MXC to lock
+        if has_miner:
+            bonus_mpower_left = max(0, (10**6)*n_miners - mPower - additional_mpower_i)
+            print("bonus_mpower_left", bonus_mpower_left, "additional_mpower_i", additional_mpower_i)
+            
+            discounted_mxc_to_lock = bonus_mpower_left / total_boost_rate
+            raw_mxc_to_lock = (additional_mpower_i - bonus_mpower_left) / (1+lock_bonus)
+            mxc_to_lock = discounted_mxc_to_lock + raw_mxc_to_lock
+
+        #additional_mxc_to_lock_i = min(max(0, mxc_to_lock), 5000*mpower_per_dhx_i)
         additional_mxc_to_lock_i = min(max(0, (additional_mpower_i) / total_boost_rate), 5000*mpower_per_dhx_i)
         additional_mxc_to_lock_v.append(additional_mxc_to_lock_i)
 
         # Ideal mined DHX
-        ideal_mined_dhx_i = min(bonded_dhx_i / 70, 5000)
+        ideal_mined_dhx_i = min(ideal_bonded_dhx_i / 70, 5000)
         ideal_mined_dhx_v.append(ideal_mined_dhx_i)
 
         # Additional DHX to bond
-        additional_dhx_to_bond_i = max(0, fueled_dhx_i - bonded_dhx_i )
+        additional_dhx_to_bond_i = max(0, fueled_dhx_i - ideal_bonded_dhx_i )
         additional_dhx_to_bond_v.append(additional_dhx_to_bond_i)
 
 

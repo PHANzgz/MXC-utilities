@@ -14,8 +14,8 @@ def write():
         want to contribute):
 
         - API Calls to get the default value for MXC and DHX
-        - Take into account the network growth(in terms of mPower) produced by yourself. This will solve
-        the potential rewards and allow for larger investors to get more accurate results.
+        - (EXPERIMENTAL DONE)Take into account the network growth(in terms of mPower) produced by yourself. This will solve
+        allow for larger investors to get more accurate results.
         - Add an option in the "mPower and DHX bonded" input method where the user can specify if he/she
         already owns some MXC or DHX.
         - Add an option where the user may specify the amount of MXC/mPower he is able to keep adding daily.
