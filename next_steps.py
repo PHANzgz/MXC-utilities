@@ -23,9 +23,9 @@ def write():
         feature.
         - Write the mining guide
         - (EXPERIMENTAL DONE) Take into account that each miner only boosts up to 1 million MXC when calculating
-        additional MXC required for max rewards.
+        additional MXC required for max rewards.  
         - Take into account that each miner only boosts up to 1 million MXC when input
-        mode is othet than '- (EXPERIMENTAL DONE) Take into account that each miner only boosts up to 1 million MXC.'
+        mode is othet than '
 
         """
     )
