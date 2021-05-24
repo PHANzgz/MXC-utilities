@@ -145,12 +145,15 @@ def write():
     if (input_option == "Current mPower and bonded DHX"):
         col1, col2 = st.beta_columns(2)
         mPower = col1.number_input("Current mPower", value=50000.00, format="%.2f", step=1000.)
+
+       
         if has_miner:
-            col1.markdown("""
-                To factor the MXC boosted per miner limit and estimate future "re-locks" please specify how
-                much MXC you have locked.
-                """)
-            locked_mxc = col1.number_input("MXC currently locked", min_value=0., value=0., step=1000.)
+            with st.beta_expander("Show advanced settings: MXC boost limit per miner"):
+                st.markdown("""
+                    To factor the MXC boosted per miner limit and estimate future "re-locks" please specify how
+                    much MXC you have locked.
+                    """)
+                locked_mxc = st.number_input("MXC currently locked", min_value=0., value=0., step=1000.)
 
         bonded_dhx = col2.number_input("Current bonded DHX", value=4.5000, format="%.4f", step=0.5)
 
@@ -247,9 +250,7 @@ def write():
     ideal_mined_dhx_v = []
     additional_mxc_to_lock_v = []
     additional_dhx_to_bond_v = []
-    print("-"*200)
-    print("-"*200)
-    print("-"*200)
+    #print("-"*200)
     for i, mpower_per_dhx_i in enumerate(mpower_per_dhx):
 
         if (i > 6): # Mined DHX gets automatically bonded after 7 days
