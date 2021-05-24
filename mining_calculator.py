@@ -118,6 +118,8 @@ def write():
     has_miner = col1.checkbox("I have an M2 Pro miner or more")
     if has_miner:
         n_miners = col1.number_input(label="How many miners do you own?", value=1, min_value=1, step=1)
+    else:
+        n_miners = 0
 
     col2.markdown(
         """
