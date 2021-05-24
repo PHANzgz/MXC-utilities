@@ -28,7 +28,8 @@ def main():
         This calculator was created by PHAN to help the community and it is ad-free
         and open-source. If you want to support me, you can buy me some coffe here:   
         ETH, MXC: `0xEEBFbb5EF279dCBeAA3eEe505d1CefBA040FFD5a`  
-        XMR: `84q66yUueZ2bnxTurXPvrQXwWup6JoThEekp2V3maMmGWrfDsb8mFeoaNmwM9JtY8Ze1q1TYQb6mkhsB3KC1iJfJRbYYYgm`  
+        XMR: `84q66yUueZ2bnxTurXPvrQXwWup6JoThEekp2V3maMmGWrfDsb8mFeoaNmwM9JtY8Ze1q1TYQb6mkhsB3KC1iJfJRbYYYgm` 
+        NANO: `nano_13furjejtkkapz6z1cos9s7memomqw6comyts55ckixufwgja6rcnseqbfr8` 
         
         You can find the source and contribute [here](https://github.com/PHANzgz/MXC-utilities).  
         
