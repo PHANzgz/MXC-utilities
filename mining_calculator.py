@@ -97,7 +97,7 @@ def write():
         x_test_dates = np.arange(start_day, end_day)
         fig.add_trace(go.Scatter(x=x_test_dates, y=y_test, mode='lines', name='Predicted data'))
 
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig)
 
 
     st.markdown(
@@ -335,7 +335,7 @@ def write():
     fig.add_trace(go.Scatter(x=x_test_dates, y=np.array(mined_dhx_v)*dhx_price, hovertemplate='$%{y:.2f} <extra></extra>',
                              mode='lines', name='USD Rewards <br>@ current DHX Price'), secondary_y=True)
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig)
 
     # 2. Cumulative DHX rewards no compounding
     fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -354,7 +354,7 @@ def write():
     fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_mined_dhx_v*dhx_price, hovertemplate='$%{y:.2f} <extra></extra>',
                              mode='lines', name='Cumulative USD Rewards <br>@ current DHX Price'), secondary_y=True)
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig)
 
     with st.beta_expander("Show experimental features: Maximizing earnings to keep all your DHX fueled providing mPower"):
         st.markdown("# Potential rewards over time")
@@ -382,7 +382,7 @@ def write():
         fig.add_trace(go.Scatter(x=x_test_dates, y=np.array(ideal_mined_dhx_v)*dhx_price, hovertemplate='$%{y:.2f} <extra></extra>',
                                 mode='lines', name='USD Rewards <br>@ current DHX Price'), secondary_y=True)
 
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig)
 
         # 4. Cumulative DHX rewards WITH compounding
         fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -401,7 +401,7 @@ def write():
         fig.add_trace(go.Scatter(x=x_test_dates, y=cumulative_ideal_mined_dhx_v*dhx_price, hovertemplate='$%{y:.2f} <extra></extra>', 
                                 mode='lines', name='Cumulative USD Rewards <br>@ current DHX Price'), secondary_y=True)
 
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig)
 
         st.markdown("# How to maximize rewards")
         st.error("""
@@ -427,7 +427,7 @@ def write():
         fig.add_trace(go.Scatter(x=x_test_dates, y=additional_mxc_to_lock_v, 
                                 mode='lines', name='<b>MXC to lock<b>', hovertemplate = 'MXC: %{y}<extra></extra>'))
 
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig)
 
         # 6. Additional DHX to bond
         fig = go.Figure()
@@ -444,4 +444,4 @@ def write():
         fig.add_trace(go.Scatter(x=x_test_dates, y=additional_dhx_to_bond_v, 
                                 mode='lines', name='<b>MXC to lock<b>', hovertemplate = 'DHX: %{y}<extra></extra>'))
 
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig)
