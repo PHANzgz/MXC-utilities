@@ -324,10 +324,13 @@ def write():
     fig.update_layout(
         title = '<b>DHX rewards over time (No additional locking)<b>',
         xaxis_title="Time",
+        xaxis={'fixedrange':True},
+        yaxis={'fixedrange':True},
         hovermode='x unified',
         height=400, width=700)
+
     fig.update_yaxes(title_text="<b>DHX Mined per day</b>", secondary_y=False)
-    fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True)
+    fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True, fixedrange=True)
 
     # Plot
     fig.add_trace(go.Scatter(x=x_test_dates, y=mined_dhx_v, hovertemplate='DHX: %{y:.4f} <extra></extra>',
@@ -335,7 +338,8 @@ def write():
     fig.add_trace(go.Scatter(x=x_test_dates, y=np.array(mined_dhx_v)*dhx_price, hovertemplate='$%{y:.2f} <extra></extra>',
                              mode='lines', name='USD Rewards <br>@ current DHX Price'), secondary_y=True)
 
-    st.plotly_chart(fig)
+    config = {'displayModeBar': False}
+    st.plotly_chart(fig, config=config)
 
     # 2. Cumulative DHX rewards no compounding
     fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -343,9 +347,11 @@ def write():
         title = '<b>Cumulative DHX rewards over time (No additional locking)<b>',
         xaxis_title="Time",
         hovermode='x unified',
+        xaxis={'fixedrange':True},
+        yaxis={'fixedrange':True},
         height=400, width=700)
     fig.update_yaxes(title_text="<b>Cumulative DHX Mined</b>", secondary_y=False)
-    fig.update_yaxes(title_text="<b>Cumulative USD Equivalent</b> ", secondary_y=True)
+    fig.update_yaxes(title_text="<b>Cumulative USD Equivalent</b> ", secondary_y=True, fixedrange=True)
 
     # Plot
     cumulative_mined_dhx_v = np.cumsum(mined_dhx_v)
@@ -372,9 +378,11 @@ def write():
             title = '<b>DHX rewards over time (Requires additional mPower)<b>',
             xaxis_title="Time",
             hovermode='x unified',
+            xaxis={'fixedrange':True},
+            yaxis={'fixedrange':True},
             height=400, width=700)
         fig.update_yaxes(title_text="<b>DHX Mined per day</b>", secondary_y=False)
-        fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True)
+        fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True, fixedrange=True)
 
         # Plot
         fig.add_trace(go.Scatter(x=x_test_dates, y=ideal_mined_dhx_v, hovertemplate='DHX: %{y:.4f} <extra></extra>',
@@ -390,9 +398,11 @@ def write():
             title = '<b>Cumulative DHX rewards over time (Requires additional mPower)<b>',
             xaxis_title="Time",
             hovermode='x unified',
+            xaxis={'fixedrange':True},
+            yaxis={'fixedrange':True},
             height=400, width=700)
         fig.update_yaxes(title_text="<b>Cumulative DHX Mined</b>", secondary_y=False)
-        fig.update_yaxes(title_text="<b>Cumulative USD Equivalent</b> ", secondary_y=True)
+        fig.update_yaxes(title_text="<b>Cumulative USD Equivalent</b> ", fixedrange=True)
 
         # Plot
         cumulative_ideal_mined_dhx_v = np.cumsum(ideal_mined_dhx_v)
@@ -419,6 +429,8 @@ def write():
             xaxis_title="Time",
             yaxis_title="<b>MXC<b>",
             hovermode='x unified',
+            xaxis={'fixedrange':True},
+            yaxis={'fixedrange':True},
             height=400, width=700)
 
         # Plot
@@ -436,6 +448,8 @@ def write():
             xaxis_title="Time",
             yaxis_title="<b>DHX<b>",
             hovermode='x unified',
+            xaxis={'fixedrange':True},
+            yaxis={'fixedrange':True},
             height=400, width=700)
 
         # Plot
