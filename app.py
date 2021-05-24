@@ -26,8 +26,9 @@ def main():
     st.sidebar.info(
         """
         This calculator was created by PHAN to help the community and it is ad-free
-        and open-source. If you want to support me, you can send me a tip(ETH, MXC) here: 
-        `0xEEBFbb5EF279dCBeAA3eEe505d1CefBA040FFD5a`  
+        and open-source. If you want to support me, you can buy me some coffe here:   
+        ETH, MXC: `0xEEBFbb5EF279dCBeAA3eEe505d1CefBA040FFD5a`  
+        DASH: `XviHSKZCGod2vHZRgdnmqoTZNew1eSZcs1`  
         
         You can find the source and contribute [here](https://github.com/PHANzgz/MXC-utilities).  
         
