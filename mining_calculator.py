@@ -87,7 +87,7 @@ def write():
             title = 'mPower per DHX requirements',
             xaxis_title="Time",
             yaxis_title="mPower",
-            height=400, width=800)
+            height=400, width=700)
 
         # Plot train data
         x_train_dates = np.arange(INIT_DAY, final_train_day+dt.timedelta(days=1))
@@ -325,7 +325,7 @@ def write():
         title = '<b>DHX rewards over time (No additional locking)<b>',
         xaxis_title="Time",
         hovermode='x unified',
-        height=400, width=800)
+        height=400, width=700)
     fig.update_yaxes(title_text="<b>DHX Mined per day</b>", secondary_y=False)
     fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True)
 
@@ -343,7 +343,7 @@ def write():
         title = '<b>Cumulative DHX rewards over time (No additional locking)<b>',
         xaxis_title="Time",
         hovermode='x unified',
-        height=400, width=800)
+        height=400, width=700)
     fig.update_yaxes(title_text="<b>Cumulative DHX Mined</b>", secondary_y=False)
     fig.update_yaxes(title_text="<b>Cumulative USD Equivalent</b> ", secondary_y=True)
 
@@ -372,7 +372,7 @@ def write():
             title = '<b>DHX rewards over time (Requires additional mPower)<b>',
             xaxis_title="Time",
             hovermode='x unified',
-            height=400, width=800)
+            height=400, width=700)
         fig.update_yaxes(title_text="<b>DHX Mined per day</b>", secondary_y=False)
         fig.update_yaxes(title_text="<b>USD Equivalent</b> ", secondary_y=True)
 
@@ -390,7 +390,7 @@ def write():
             title = '<b>Cumulative DHX rewards over time (Requires additional mPower)<b>',
             xaxis_title="Time",
             hovermode='x unified',
-            height=400, width=800)
+            height=400, width=700)
         fig.update_yaxes(title_text="<b>Cumulative DHX Mined</b>", secondary_y=False)
         fig.update_yaxes(title_text="<b>Cumulative USD Equivalent</b> ", secondary_y=True)
 
@@ -419,7 +419,7 @@ def write():
             xaxis_title="Time",
             yaxis_title="<b>MXC<b>",
             hovermode='x unified',
-            height=400, width=800)
+            height=400, width=700)
 
         # Plot
         
@@ -436,7 +436,7 @@ def write():
             xaxis_title="Time",
             yaxis_title="<b>DHX<b>",
             hovermode='x unified',
-            height=400, width=800)
+            height=400, width=700)
 
         # Plot
         
