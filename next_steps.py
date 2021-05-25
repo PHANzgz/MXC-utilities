@@ -14,18 +14,17 @@ def write():
         want to contribute):
 
         - API Calls to get the default value for MXC and DHX
-        - (EXPERIMENTAL DONE)Take into account the network growth(in terms of mPower) produced by yourself. This will
+        - (DONE)Take into account the network growth(in terms of mPower) produced by yourself. This will
         allow for larger investors to get more accurate results.
         - Add an option in the "mPower and DHX bonded" input method where the user can specify if he/she
         already owns some MXC or DHX.
-        - Add an option where the user may specify the amount of MXC/mPower he is able to keep adding daily.
+        - (EXPERIMENTAL DONE)Add an option where the user may specify the amount of MXC/mPower he is able to keep adding daily.
         For example if he/she owns several miners and wants to lock the profits this would be a very useful
         feature.
         - Write the mining guide
         - (EXPERIMENTAL DONE) Take into account that each miner only boosts up to 1 million MXC when calculating
         additional MXC required for max rewards.  
-        - Take into account that each miner only boosts up to 1 million MXC when input
-        mode is othet than '
+        - (EXPERIMENTAL DONE)Take into account that each miner only boosts up to 1 million MXC when calculating MXC to buy/lock
 
         """
     )

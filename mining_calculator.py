@@ -22,6 +22,11 @@ def write():
         """
     )
 
+    st.info("""
+        Note: I try to add new features constantly. I also try to make sure there are no bugs with every new release. Still, I may have
+        messed something up. If you think there is a bug or you got an error please send it to me over discord: `PHAN#3179`
+        """)
+
     st.markdown(
         """
         ## Current prices
@@ -30,8 +35,8 @@ def write():
         in the corresponding boxes. In a future update, the default values will be updated automatically.
         """)
     col1, col2 = st.beta_columns(2)
-    mxc_price = col1.number_input("MXC Price ($)", value=0.02, format="%.4f", step=0.001)
-    dhx_price = col2.number_input("DHX Price ($)", value=70.00, format="%.3f", step=1.)
+    mxc_price = col1.number_input("MXC Price ($)", value=0.03, format="%.4f", step=0.001)
+    dhx_price = col2.number_input("DHX Price ($)", value=80.00, format="%.3f", step=1.)
 
     st.markdown("## Date selection")
     today = dt.date.today()
@@ -118,8 +123,10 @@ def write():
     has_miner = col1.checkbox("I have an M2 Pro miner or more")
     if has_miner:
         n_miners = col1.number_input(label="How many miners do you own?", value=1, min_value=1, step=1)
+        boostable_mxc = n_miners * (10**6)
     else:
         n_miners = 0
+        boostable_mxc = 0
 
     col2.markdown(
         """
@@ -185,6 +192,33 @@ def write():
         
         bonded_dhx = dhx_to_buy = investment / ((discounted_mpower_per_dhx[0]*mxc_price)+dhx_price)
         locked_mxc = mxc_to_buy = bonded_dhx * discounted_mpower_per_dhx[0]
+        mPower = mxc_to_buy * total_boost_rate
+
+        # Factor 1 million MXC boost limit per miner
+        if has_miner:
+            if (mxc_to_buy > boostable_mxc):
+                st.info("""
+                    The amount of MXC to buy exceeds the boost limit per miner(1 Million MXC per miner). Calculations have been adjusted
+                    to compensate for this. This is just a warning but there is nothing to worry about as it has been considered.
+                    """)
+                # First stage: Full bonus applies
+                investment_first_part = boostable_mxc*mxc_price + (boostable_mxc/discounted_mpower_per_dhx[0])*dhx_price
+                dhx_to_buy_first_part = investment_first_part / ((discounted_mpower_per_dhx[0]*mxc_price)+dhx_price)
+                mxc_to_buy_first_part = dhx_to_buy_first_part * discounted_mpower_per_dhx[0]
+
+                # Second stage: Miner bonus no longer applies
+                investment_left = investment - investment_first_part
+                discounted_mpower_per_dhx_no_miner_bonus = mpower_per_dhx / (1+lock_bonus)
+                dhx_to_buy_second_part = investment_left / ((discounted_mpower_per_dhx_no_miner_bonus[0]*mxc_price)+dhx_price)
+                mxc_to_buy_second_part = dhx_to_buy_second_part * discounted_mpower_per_dhx_no_miner_bonus[0]
+
+                # Add together
+                bonded_dhx = dhx_to_buy = dhx_to_buy_first_part + dhx_to_buy_second_part
+                locked_mxc = mxc_to_buy = mxc_to_buy_first_part + mxc_to_buy_second_part
+
+                # Recompute
+                mPower = boostable_mxc*total_boost_rate + mxc_to_buy_second_part*(1+lock_bonus)
+                print(boostable_mxc, total_boost_rate, mxc_to_buy_second_part, (1+lock_bonus))
         
         #if (current_dhx > 0) or (current_mxc > 0):
         #    st.markdown("> Total MXC after investment: `{:.2f}` MXC".format(mxc_to_buy+current_mxc))
@@ -193,12 +227,6 @@ def write():
         st.markdown("> Initial MXC to buy: **`{:.2f}` MXC** (${:.2f})".format(mxc_to_buy, mxc_to_buy*mxc_price))
         st.markdown("> Initial DHX to buy: **`{:.4f}` DHX** (${:.2f})".format(dhx_to_buy, dhx_to_buy*dhx_price))
 
-        mPower = mxc_to_buy * total_boost_rate
-
-        # Miner limit 1 million mPower
-        if (n_miners*(10**6) > mPower):
-            # Nerf mPower and adjust values
-            pass
             
 
         st.markdown("> mPower: **`{:.3f}`**".format(mPower))
@@ -212,20 +240,54 @@ def write():
         st.markdown("### Initial calculations")
 
         locked_mxc = mxc_to_buy = bonded_dhx * discounted_mpower_per_dhx[0]
+        mPower = mxc_to_buy * total_boost_rate
+
+        # Factor 1 million MXC boost limit per miner
+        if has_miner:
+            if (mxc_to_buy > boostable_mxc):
+                st.info("""
+                    The amount of MXC to buy exceeds the boost limit per miner(1 Million MXC per miner). Calculations have been adjusted
+                    to compensate for this. This is just a warning but there is nothing to worry about as it has been considered.
+                    """)
+                # First stage: Full bonus applies
+                mxc_to_buy_first_part = boostable_mxc
+                fueled_dhx_first_part = mxc_to_buy_first_part / discounted_mpower_per_dhx[0]
+
+                # Second stage: Miner bonus no longer applies
+                discounted_mpower_per_dhx_no_miner_bonus = mpower_per_dhx / (1+lock_bonus)
+                mxc_to_buy_second_part = (bonded_dhx - fueled_dhx_first_part) * discounted_mpower_per_dhx_no_miner_bonus[0]
+
+                # Add together
+                locked_mxc = mxc_to_buy = mxc_to_buy_first_part + mxc_to_buy_second_part
+
+                # Recompute
+                mPower = mxc_to_buy_first_part*total_boost_rate + mxc_to_buy_second_part*(1+lock_bonus)
 
         st.markdown("> Initial MXC to buy: **`{:.3f}` MXC** (${:.2f})".format(mxc_to_buy, mxc_to_buy*mxc_price))
-        mPower = mxc_to_buy * total_boost_rate
         st.markdown("> mPower: **`{:.3f}`**".format(mPower))
 
         st.markdown("> ## **Initial DHX mined per day: `{:.3f}` (${:.2f}) **".format(bonded_dhx/70, dhx_price*bonded_dhx/70))
 
     elif (input_option == "Current locked MXC"):
         col1, col2 = st.beta_columns(2)
+
         locked_mxc = col1.number_input("Current locked MXC", value=50000.00, format="%.2f", step=1000.)
 
         st.markdown("### Initial calculations")
-
         mPower = locked_mxc * total_boost_rate
+
+        # Factor 1 million MXC boost limit per miner
+        if has_miner:
+            if (locked_mxc > boostable_mxc):
+                st.info("""
+                    The amount of MXC to buy exceeds the boost limit per miner(1 Million MXC per miner). Calculations have been adjusted
+                    to compensate for this. This is just a warning but there is nothing to worry about as it has been considered.
+                    """)
+
+                # Recompute
+                mPower = boostable_mxc*total_boost_rate + (locked_mxc-boostable_mxc)*(1+lock_bonus)
+
+
         bonded_dhx = dhx_to_buy = mPower / mpower_per_dhx[0]
 
         st.markdown("> Initial DHX to buy: **`{:.3f}` DHX** (${:.2f})".format(dhx_to_buy, dhx_to_buy*dhx_price))
@@ -243,23 +305,48 @@ def write():
         """
     )
 
+    with st.beta_expander("Will you lock more MXC every day? Try this feature!"):
+        additional_mxc_per_day = st.number_input("How much MXC per day will you lock?", value=0.0, min_value=0.0, step=100.)
+
+
+    if has_miner:
+        if (locked_mxc < 1):
+            st.warning("""
+            It seems you haven't filled the amount of locked MXC you have. In order to consider the MXC boost per miner limit you must specify it. 
+            If your input method is "Current mPower and bonded DHX" you can find this setting in the "Your data" section and inside advanced settings. 
+            If you are not interested in this feature, then don't worry!
+            """)
 
     # TODO Vectorize all this, current implementation is very suboptimal
 
+    bonded_dhx_i = bonded_dhx
+    bonded_dhx_v = []
     ideal_bonded_dhx_i = bonded_dhx
     ideal_bonded_dhx_v = []
+    fueled_dhx_v = []
     mined_dhx_v = []
     ideal_mined_dhx_v = []
     additional_mxc_to_lock_v = []
     additional_dhx_to_bond_v = []
-    #print("-"*200)
+    print("-"*200)
+    mpower_v = []
     for i, mpower_per_dhx_i in enumerate(mpower_per_dhx):
 
+        # Ideal bonded dhx calculation
         if (i > 6): # Mined DHX gets automatically bonded after 7 days
             ideal_bonded_dhx_i += ideal_bonded_dhx_v[i - 7] / 70 # Theoretically, only if max rewards
         ideal_bonded_dhx_v.append(ideal_bonded_dhx_i) # keep track of bonded dhx
+    
+        # We recompute it since an additional_mxc_per_day will be locked
+        if (input_option != "Current mPower and bonded DHX"):
+            if (locked_mxc > boostable_mxc):
+                mPower = boostable_mxc*total_boost_rate + (locked_mxc-boostable_mxc)*(1+lock_bonus)
+            else:
+                mPower = locked_mxc * total_boost_rate
+        mpower_v.append(mPower)
 
         fueled_dhx_i = mPower / mpower_per_dhx_i
+        fueled_dhx_v.append(fueled_dhx_i)
 
         # Calculate additional mPower required
         # Network growth produced by yourself if you were to provide the necessary mPower for compounding
@@ -283,6 +370,12 @@ def write():
         # Mined DHX
         mined_dhx_i = min(fueled_dhx_i/70, ideal_bonded_dhx_i/70, 5000)
         mined_dhx_v.append(mined_dhx_i)
+
+        # Bonded DHX
+        if (i > 6): # Mined DHX gets automatically bonded after 7 days
+            bonded_dhx_i += mined_dhx_v[i - 7]
+        bonded_dhx_v.append(bonded_dhx_i) # keep track of bonded dhx
+    
 
         # Additional MXC to lock
         if has_miner:
@@ -311,6 +404,25 @@ def write():
         additional_dhx_to_bond_i = max(0, fueled_dhx_i - ideal_bonded_dhx_i )
         additional_dhx_to_bond_v.append(additional_dhx_to_bond_i)
 
+        # Additional mxc locked per day (optional, defaults to zero)
+        if (input_option != "Current mPower and bonded DHX"):
+            locked_mxc += additional_mxc_per_day
+        else:
+            # If has_miner we have to account for the limit
+            if has_miner:
+                locked_mxc += additional_mxc_per_day
+                if (locked_mxc > boostable_mxc): 
+                    boostable_mxc_portion = max(0, (boostable_mxc - (locked_mxc-additional_mxc_per_day)  ))
+                    additional_mpower_first_part = boostable_mxc_portion*total_boost_rate
+                    additional_mpower_second_part = (additional_mxc_per_day - boostable_mxc_portion)*(1+lock_bonus)
+                    mPower += additional_mpower_first_part + additional_mpower_second_part
+
+                else: # otherwise no problem
+                    mPower += additional_mxc_per_day*total_boost_rate
+
+            else:
+                mPower += additional_mxc_per_day*total_boost_rate
+    
 
     # Don't forget to add this
     if (input_option == "Current mPower and bonded DHX"):
@@ -321,10 +433,15 @@ def write():
 
     # Plotting
 
+    if additional_mxc_per_day > 0:
+        additional_lock_title = ' (Additional {:.2f} MXC locked per day)<b>'.format(additional_mxc_per_day)
+    else:
+        additional_lock_title = ' (No additional locking)<b>'
+
     # 1. DHX rewards no compounding
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.update_layout(
-        title = '<b>DHX rewards over time (No additional locking)<b>',
+        title = '<b>DHX rewards over time' + additional_lock_title,
         xaxis_title="Time",
         xaxis={'fixedrange':True},
         yaxis={'fixedrange':True},
@@ -337,7 +454,7 @@ def write():
     # Plot
     fig.add_trace(go.Scatter(x=x_test_dates, y=mined_dhx_v, hovertemplate='DHX: %{y:.4f} <extra></extra>',
                              mode='lines+markers', name='DHX Mined', marker=dict(size=2) ), secondary_y=False)
-    fig.add_trace(go.Scatter(x=x_test_dates, y=np.array(mined_dhx_v)*dhx_price, hovertemplate='$%{y:.2f} <extra></extra>',
+    fig.add_trace(go.Scatter(x=x_test_dates, y=np.array(mined_dhx_v)*dhx_price, hovertemplate='$%{y:.2f}<extra></extra>',
                              mode='lines', name='USD Rewards <br>@ current DHX Price'), secondary_y=True)
 
     config = {'displayModeBar': False}
@@ -346,7 +463,7 @@ def write():
     # 2. Cumulative DHX rewards no compounding
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.update_layout(
-        title = '<b>Cumulative DHX rewards over time (No additional locking)<b>',
+        title = '<b>Cumulative DHX rewards over time' + additional_lock_title,
         xaxis_title="Time",
         hovermode='x unified',
         xaxis={'fixedrange':True},
@@ -363,6 +480,38 @@ def write():
                              mode='lines', name='Cumulative USD Rewards <br>@ current DHX Price'), secondary_y=True)
 
     st.plotly_chart(fig)
+
+    with st.beta_expander("Show additional graphs"):
+
+        # EXTRA.1 DHX fueled vs cumulative
+        fig = make_subplots(rows=2, cols=1, vertical_spacing=0.1, shared_xaxes=True)#go.Figure()#make_subplots(specs=[[{"secondary_y": True}]])
+        fig.update_layout(
+            title = '<b>Fueled DHX and Bonded DHX' + additional_lock_title,
+            xaxis_title="Time",
+            xaxis={'fixedrange':True},
+            yaxis={'fixedrange':True},
+            hovermode='x unified',
+            height=600, width=700)
+
+        # Plot
+        fig.add_trace(go.Scatter(x=x_test_dates, y=fueled_dhx_v, hovertemplate='Fueled DHX: %{y:.4f} <extra></extra>',
+                                mode='lines+markers', name='Fueled DHX', marker=dict(size=2)), row=1, col=1 )
+        fig.add_trace(go.Scatter(x=x_test_dates, y=bonded_dhx_v, hovertemplate='Bonded DHX: %{y:.4f} <extra></extra>',
+                                mode='lines', name='Bonded DHX'), row=1, col=1)
+
+        safe_to_withdraw_dhx = [max(0, bonded-fueled) for bonded, fueled in zip(bonded_dhx_v, fueled_dhx_v)]
+        fig.add_trace(go.Scatter(x=x_test_dates, y=safe_to_withdraw_dhx, hovertemplate='Safe to withdraw DHX: %{y:.4f} <extra></extra>',
+                                mode='lines', name='Safe to withdraw DHX'), row=2, col=1)
+        fig.update_yaxes(row=2, col=1, fixedrange=True)
+
+        config = {'displayModeBar': False}
+        st.plotly_chart(fig, config=config)
+
+        st.info("""
+            The "Safe to withdraw DHX" indicates the difference between your bonded DHX and fueled DHX. If the result is positive and
+            keeps growing, it's absolutely safe to unbond it and withdraw it, as it no longer contributes to produce earnings.
+            """)
+
 
     with st.beta_expander("Show experimental features: Maximizing earnings to keep all your DHX fueled providing mPower"):
         st.markdown("# Potential rewards over time")
