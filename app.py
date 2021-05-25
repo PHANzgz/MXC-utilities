@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit_analytics
 
 # Load pages
 import mining_calculator
@@ -10,7 +11,7 @@ PAGE_SRCS = [mining_calculator, mining_tutorial, next_steps]
 
 
 def main():
-
+    streamlit_analytics.start_tracking()
     st.set_page_config(page_title="DHX Mining calculator")
 
     # Application select
@@ -36,6 +37,8 @@ def main():
         contributed to the project.
         """
         )
+
+    streamlit_analytics.stop_tracking()
 
 if __name__ == "__main__":
     main()
