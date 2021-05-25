@@ -54,8 +54,8 @@ def write():
             """)
 
         col1, col2 = st.beta_columns(2)
-        exp_gain = col1.slider("Exponential growth gain", 0.1, 2.0, value=0.75, step=0.05)
-        prop_gain = col2.slider("Proportional growth gain", 0.1, 2.0, value=1.50, step=0.05)
+        exp_gain = col1.slider("Exponential growth gain", 0.05, 2.0, value=0.50, step=0.05)
+        prop_gain = col2.slider("Proportional growth gain", 0.1, 4.0, value=2.0, step=0.05)
 
         # Train data
         with open("total_mpower_from_apr17.txt") as f:
