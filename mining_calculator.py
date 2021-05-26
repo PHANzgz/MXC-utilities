@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import sys
 
-import cmc_api # Custom calls to CMC API and get mxc and dhx prices
+#import cmc_api # Custom calls to CMC API and get mxc and dhx prices
 
 INIT_DAY = dt.date(2021, 4, 17)
 
