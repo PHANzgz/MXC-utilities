@@ -8,6 +8,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import sys
 
+import cmc_api # Custom calls to CMC API and get mxc and dhx prices
+
 INIT_DAY = dt.date(2021, 4, 17)
 
 # Equation to predict mPower
@@ -31,12 +33,14 @@ def write():
         """
         ## Current prices
         
-        Enter the [MXC price](https://coinmarketcap.com/currencies/mxc/) and [DHX price](https://coinmarketcap.com/currencies/datahighway/) 
-        in the corresponding boxes. In a future update, the default values will be updated automatically.
+        Default MXC and DHX prices are obtained through Coinmarketcap latest rates, but feel free to change them if you want to.
         """)
+
+    mxc_price_default, dhx_price_default = cmc_api.get_mxc_dhx_prices()
+
     col1, col2 = st.beta_columns(2)
-    mxc_price = col1.number_input("MXC Price ($)", value=0.03, format="%.4f", step=0.001)
-    dhx_price = col2.number_input("DHX Price ($)", value=80.00, format="%.3f", step=1.)
+    mxc_price = col1.number_input("MXC Price ($)", value=mxc_price_default, format="%.4f", step=0.001)
+    dhx_price = col2.number_input("DHX Price ($)", value=dhx_price_default, format="%.3f", step=1.)
 
     st.markdown("## Date selection")
     today = dt.date.today()
@@ -218,7 +222,6 @@ def write():
 
                 # Recompute
                 mPower = boostable_mxc*total_boost_rate + mxc_to_buy_second_part*(1+lock_bonus)
-                print(boostable_mxc, total_boost_rate, mxc_to_buy_second_part, (1+lock_bonus))
         
         #if (current_dhx > 0) or (current_mxc > 0):
         #    st.markdown("> Total MXC after investment: `{:.2f}` MXC".format(mxc_to_buy+current_mxc))
@@ -328,7 +331,6 @@ def write():
     ideal_mined_dhx_v = []
     additional_mxc_to_lock_v = []
     additional_dhx_to_bond_v = []
-    print("-"*200)
     mpower_v = []
     for i, mpower_per_dhx_i in enumerate(mpower_per_dhx):
 

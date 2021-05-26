@@ -13,7 +13,7 @@ def write():
         Here is a list of the things I want to add/improve (the project is open-source so DM me if you
         want to contribute):
 
-        - API Calls to get the default value for MXC and DHX
+        - (DONE)API Calls to get the default value for MXC and DHX
         - (DONE)Take into account the network growth(in terms of mPower) produced by yourself. This will
         allow for larger investors to get more accurate results.
         - Add an option in the "mPower and DHX bonded" input method where the user can specify if he/she
