@@ -36,7 +36,8 @@ def write():
         Default MXC and DHX prices are obtained through Coinmarketcap latest rates, but feel free to change them if you want to.
         """)
 
-    mxc_price_default, dhx_price_default = cmc_api.get_mxc_dhx_prices()
+    #mxc_price_default, dhx_price_default = cmc_api.get_mxc_dhx_prices()
+    mxc_price_default, dhx_price_default = 0.02, 78.
 
     col1, col2 = st.beta_columns(2)
     mxc_price = col1.number_input("MXC Price ($)", value=mxc_price_default, format="%.4f", step=0.001)
