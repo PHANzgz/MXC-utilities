@@ -303,7 +303,10 @@ def write():
         # Rewards over time
 
         In these graphs, the left vertical axis represents the amount of DHX mined, while the right vertical
-        axis represents the $USD equivalent at current rates.
+        axis represents the $USD equivalent at current rates.  
+
+        Keep in mind that this data is computed using **predicted** network growth. That means that for longer
+        periods of time the results may not be accurate.
 
         """
     )
