@@ -309,7 +309,11 @@ def write():
     )
 
     with st.beta_expander("Will you lock more MXC every day? Try this feature!"):
-        additional_mxc_per_day = st.number_input("How much MXC per day will you lock?", value=0.0, min_value=0.0, step=100.)
+
+        if st.checkbox("Enable additional MXC locks per day", value=False):
+            additional_mxc_per_day = st.number_input("How much MXC per day will you lock?", value=0.0, min_value=0.0, step=100.)
+        else:
+            additional_mxc_per_day = 0
 
 
     if has_miner:
