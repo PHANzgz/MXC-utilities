@@ -7,6 +7,7 @@ import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import sys
+import time
 
 import cmc_api # Custom calls to CMC API and get mxc and dhx prices
 
@@ -17,7 +18,24 @@ INIT_DAY = dt.date(2021, 4, 17)
 def exp_regression(x, a, b):
     return a * np.exp(b * x)
 
-def write():
+
+
+def write(state):
+
+    # Query API if enough time has passed
+    print("-"*50)
+    t_state, mxc_price_state, dhx_price_state = state
+    t = time.time()
+    if (t - t_state) > (10*60):
+        mxc_price_default, dhx_price_default = cmc_api.get_mxc_dhx_prices()
+        print("Updated prices at time " + time.ctime(int(t)) + " with a delta of {:.2f}s".format(t - t_state))
+        del state[:] # Horrible, but only way to make streamlit actually store values across runs
+        state.extend([t, mxc_price_default, mxc_price_default])
+    else:
+        print("New run, but no new prices were fetched")
+        mxc_price_default, dhx_price_default = mxc_price_state, dhx_price_state
+
+
     st.markdown(
         """
         # DHX Mining calculator
@@ -36,7 +54,6 @@ def write():
         Default MXC and DHX prices are obtained through Coinmarketcap latest rates, but feel free to change them if you want to.
         """)
 
-    mxc_price_default, dhx_price_default = cmc_api.get_mxc_dhx_prices()
 
     col1, col2 = st.beta_columns(2)
     mxc_price = col1.number_input("MXC Price ($)", value=mxc_price_default, format="%.4f", step=0.001)
@@ -619,3 +636,6 @@ def write():
                                 mode='lines', name='<b>MXC to lock<b>', hovertemplate = 'DHX: %{y}<extra></extra>'))
 
         st.plotly_chart(fig)
+
+    with st.beta_expander("Show debug info"):
+        st.text("State is {}".format(state))

@@ -9,12 +9,23 @@ import next_steps
 PAGE_NAMES = ["Mining calculator", "Mining guide", "Next steps"]
 PAGE_SRCS = [mining_calculator, mining_tutorial, next_steps]
 
+st.set_page_config(page_title="DHX Mining calculator")
+
+# Persistent storage for API calls
+@st.cache(allow_output_mutation=True)
+def storage():
+    # time, mxc_price, dhx_price
+    return []
+
+state = storage()
 
 def main():
 
-    with streamlit_analytics.track():
+    # Init storage
+    if len(state) == 0:
+        state.extend([0., 0., 0.])
 
-        st.set_page_config(page_title="DHX Mining calculator")
+    with streamlit_analytics.track():
 
         # Application select
         st.sidebar.title("MXC/DHX Mining guide")
@@ -23,7 +34,7 @@ def main():
         page = PAGE_SRCS[page_selection_ix]
 
         # Write selected page
-        page.write()
+        page.write(state)
 
         st.sidebar.title("About")
         st.sidebar.info(

@@ -2,7 +2,7 @@ import streamlit as st
 import os
 
 
-def write():
+def write(state):
     st.markdown(
         """
         # Next steps
