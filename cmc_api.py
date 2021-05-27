@@ -16,7 +16,7 @@ headers = {
 session = Session()
 session.headers.update(headers)
 
-@st.cache
+#@st.cache
 def get_mxc_dhx_prices():
     try:
         response = session.get(url, params=parameters)

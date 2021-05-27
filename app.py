@@ -30,7 +30,7 @@ def main():
             """
             This calculator was created by PHAN to help the community and it is ad-free
             and open-source. If you want to support me, you can buy me some coffe here:   
-            ETH, MXC: `0xEEBFbb5EF279dCBeAA3eEe505d1CefBA040FFD5a`  
+            ETH, MXC (ERC20 and BEP20): `0xEEBFbb5EF279dCBeAA3eEe505d1CefBA040FFD5a`  
             DASH: `XeFNCe39ebB4vnruL1hwqsr57mHDqE8D9i`  
             Paypal:  [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/donate?hosted_button_id=TX8C42JLJ27AC)
             
