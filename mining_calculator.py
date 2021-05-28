@@ -187,6 +187,12 @@ def write(state):
                     """)
                 locked_mxc = st.number_input("MXC currently locked", min_value=0., value=0., step=1000.)
 
+            if (locked_mxc < 1):
+                st.warning("""
+                It seems you haven't filled the amount of locked MXC you have. In order to consider the MXC boost per miner limit you must specify it.   
+                If you are not interested in this feature, then don't worry!
+                """)
+
         bonded_dhx = col2.number_input("Current bonded DHX", value=4.5000, format="%.4f", step=0.5)
 
         st.markdown("### Initial calculations")
@@ -338,13 +344,6 @@ def write(state):
             additional_mxc_per_day = 0
 
 
-    if has_miner:
-        if (locked_mxc < 1):
-            st.warning("""
-            It seems you haven't filled the amount of locked MXC you have. In order to consider the MXC boost per miner limit you must specify it. 
-            If your input method is "Current mPower and bonded DHX" you can find this setting in the "Your data" section and inside advanced settings. 
-            If you are not interested in this feature, then don't worry!
-            """)
 
     # TODO Vectorize all this, current implementation is very suboptimal
 
