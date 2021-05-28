@@ -26,13 +26,15 @@ def write(state):
     print("-"*50)
     t_state, mxc_price_state, dhx_price_state = state
     t = time.time()
-    if (t - t_state) > (10):
+    if (t - t_state) > (10*60):
+        debug_new_query = True
         mxc_price_default, dhx_price_default = cmc_api.get_mxc_dhx_prices()
         print("Updated prices at time " + time.ctime(int(t)) + " with a delta of {:.2f}s".format(t - t_state))
         del state[:] # Horrible, but only way to make streamlit actually store values across runs
         state.extend([t, mxc_price_default, dhx_price_default])
     else:
         print("New run, but no new prices were fetched")
+        debug_new_query = False
         mxc_price_default, dhx_price_default = mxc_price_state, dhx_price_state
 
 
@@ -639,3 +641,4 @@ def write(state):
 
     with st.beta_expander("Show debug info"):
         st.text("State is {}".format(state))
+        st.text("debug_new_query = {}".format(debug_new_query))
