@@ -26,7 +26,7 @@ def write(state):
     print("-"*50)
     t_state, mxc_price_state, dhx_price_state = state
     t = time.time()
-    if (t - t_state) > (10*60):
+    if (t - t_state) > (10):
         mxc_price_default, dhx_price_default = cmc_api.get_mxc_dhx_prices()
         print("Updated prices at time " + time.ctime(int(t)) + " with a delta of {:.2f}s".format(t - t_state))
         del state[:] # Horrible, but only way to make streamlit actually store values across runs
