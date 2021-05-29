@@ -170,7 +170,11 @@ def write(state):
 
     
     st.markdown("### **How do you wish to input your data?**")
-    options = ["Current mPower and bonded DHX", "Amount of money to invest", "Current bonded DHX", "Current locked MXC"]
+    options = ["Current mPower and bonded DHX",
+               "Current locked MXC and bonded DHX",
+               "Amount of money to invest", 
+               "Current bonded DHX", 
+               "Current locked MXC"]
     input_option = st.selectbox("", options, index=0)
 
     st.markdown("### Your data")
@@ -178,7 +182,6 @@ def write(state):
         col1, col2 = st.beta_columns(2)
         mPower = col1.number_input("Current mPower", value=50000.00, format="%.2f", step=1000.)
 
-       
         if has_miner:
             with st.beta_expander("Show advanced settings: MXC boost limit per miner"):
                 st.markdown("""
@@ -201,7 +204,38 @@ def write(state):
 
         additional_mxc_to_lock_placeholder = st.empty()
         additional_dhx_to_bond_placeholder = st.empty()
-        st.markdown("> ## **Initial DHX mined per day: `{:.3f}` (${:.2f}) **".format(initial_mined_dhx, dhx_price*initial_mined_dhx))
+        st.markdown("> ## **Initial DHX mined per day: `{:.4f}` (${:.2f}) **".format(initial_mined_dhx, dhx_price*initial_mined_dhx))
+
+    
+    elif (input_option == "Current locked MXC and bonded DHX"):
+        col1, col2 = st.beta_columns(2)
+
+        locked_mxc = col1.number_input("Current locked MXC", value=50000.00, format="%.2f", step=1000.)
+        bonded_dhx = col2.number_input("Current bonded DHX", value=4.5000, format="%.4f", step=0.5)
+
+        st.markdown("### Initial calculations")
+        mPower = locked_mxc * total_boost_rate
+
+        # Factor 1 million MXC boost limit per miner
+        if has_miner:
+            if (locked_mxc > boostable_mxc):
+                st.info("""
+                    The amount of MXC to buy exceeds the boost limit per miner(1 Million MXC per miner). Calculations have been adjusted
+                    to compensate for this. This is just a warning but there is nothing to worry about as it has been considered.
+                    """)
+
+                # Recompute
+                mPower = boostable_mxc*total_boost_rate + (locked_mxc-boostable_mxc)*(1+lock_bonus)
+
+
+        st.markdown("> mPower: **`{:.2f}`**".format(mPower))
+
+        additional_mxc_to_lock_placeholder = st.empty()
+        additional_dhx_to_bond_placeholder = st.empty()
+
+        initial_mined_dhx = min(bonded_dhx/70, (mPower/mpower_per_dhx[0]) / 70 )
+        st.markdown("> ## **Initial DHX mined per day: `{:.4f}` (${:.2f}) **".format(initial_mined_dhx, dhx_price*initial_mined_dhx))
+
 
     elif (input_option == "Amount of money to invest"):
         col1, col2 = st.beta_columns(2)
@@ -259,7 +293,7 @@ def write(state):
 
         st.markdown("> mPower: **`{:.3f}`**".format(mPower))
 
-        st.markdown("> ## **Initial DHX mined per day: `{:.3f}` (${:.2f}) **".format(dhx_to_buy/70, dhx_price*dhx_to_buy/70))
+        st.markdown("> ## **Initial DHX mined per day: `{:.4f}` (${:.2f}) **".format(dhx_to_buy/70, dhx_price*dhx_to_buy/70))
 
     elif (input_option == "Current bonded DHX"):
         col1, col2 = st.beta_columns(2)
@@ -294,7 +328,7 @@ def write(state):
         st.markdown("> Initial MXC to buy: **`{:.3f}` MXC** (${:.2f})".format(mxc_to_buy, mxc_to_buy*mxc_price))
         st.markdown("> mPower: **`{:.3f}`**".format(mPower))
 
-        st.markdown("> ## **Initial DHX mined per day: `{:.3f}` (${:.2f}) **".format(bonded_dhx/70, dhx_price*bonded_dhx/70))
+        st.markdown("> ## **Initial DHX mined per day: `{:.4f}` (${:.2f}) **".format(bonded_dhx/70, dhx_price*bonded_dhx/70))
 
     elif (input_option == "Current locked MXC"):
         col1, col2 = st.beta_columns(2)
@@ -320,7 +354,7 @@ def write(state):
 
         st.markdown("> Initial DHX to buy: **`{:.3f}` DHX** (${:.2f})".format(dhx_to_buy, dhx_to_buy*dhx_price))
         st.markdown("> mPower: **`{:.3f}`**".format(mPower))
-        st.markdown("> ## **Initial DHX mined per day: `{:.3f}` (${:.2f}) **".format(dhx_to_buy/70, dhx_price*dhx_to_buy/70))
+        st.markdown("> ## **Initial DHX mined per day: `{:.4f}` (${:.2f}) **".format(dhx_to_buy/70, dhx_price*dhx_to_buy/70))
 
     
     st.markdown(
@@ -452,10 +486,10 @@ def write(state):
     
 
     # Don't forget to add this
-    if (input_option == "Current mPower and bonded DHX"):
-        additional_mxc_to_lock_placeholder.markdown("> Additional MXC to lock for full 'day 0' earnings: **`{:.3f}` MXC** (${:.2f})"
+    if (input_option == "Current mPower and bonded DHX" ) or (input_option == "Current locked MXC and bonded DHX"):
+        additional_mxc_to_lock_placeholder.markdown("> Additional MXC to lock for max 'day 0' earnings: **`{:.3f}` MXC** (${:.2f})"
                                                     .format(additional_mxc_to_lock_v[0], additional_mxc_to_lock_v[0]*mxc_price))
-        additional_dhx_to_bond_placeholder.markdown("> Additional DHX to bond for full 'day 0' earnings: **`{:.4f}` DHX** (${:.2f})"
+        additional_dhx_to_bond_placeholder.markdown("> Additional DHX to bond for max 'day 0' earnings: **`{:.4f}` DHX** (${:.2f})"
                                                     .format(additional_dhx_to_bond_v[0], additional_dhx_to_bond_v[0]*dhx_price))
 
     # Plotting
