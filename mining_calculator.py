@@ -614,7 +614,7 @@ def write(state):
             yaxis={'fixedrange':True},
             height=400, width=700)
         fig.update_yaxes(title_text="<b>Cumulative DHX Mined</b>", secondary_y=False)
-        fig.update_yaxes(title_text="<b>Cumulative USD Equivalent</b> ", fixedrange=True)
+        fig.update_yaxes(title_text="<b>Cumulative USD Equivalent</b> ", fixedrange=True, secondary_y=True)
 
         # Plot
         cumulative_ideal_mined_dhx_v = np.cumsum(ideal_mined_dhx_v)
