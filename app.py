@@ -25,32 +25,32 @@ def main():
     if len(state) == 0:
         state.extend([0., 0., 0.])
 
-    with streamlit_analytics.track():
+    #with streamlit_analytics.track():
 
-        # Application select
-        st.sidebar.title("MXC/DHX Mining guide")
-        page_selection = st.sidebar.radio("Menu", PAGE_NAMES)
-        page_selection_ix = PAGE_NAMES.index(page_selection)
-        page = PAGE_SRCS[page_selection_ix]
+    # Application select
+    st.sidebar.title("MXC/DHX Mining guide")
+    page_selection = st.sidebar.radio("Menu", PAGE_NAMES)
+    page_selection_ix = PAGE_NAMES.index(page_selection)
+    page = PAGE_SRCS[page_selection_ix]
 
-        # Write selected page
-        page.write(state)
+    # Write selected page
+    page.write(state)
 
-        st.sidebar.title("About")
-        st.sidebar.info(
-            """
-            This calculator was created by PHAN to help the community and it is ad-free
-            and open-source. If you want to support me, you can buy me some coffe here:   
-            ETH, MXC (ERC20 and BEP20): `0xEEBFbb5EF279dCBeAA3eEe505d1CefBA040FFD5a`  
-            DASH: `XeFNCe39ebB4vnruL1hwqsr57mHDqE8D9i`  
-            Paypal:  [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/donate?hosted_button_id=TX8C42JLJ27AC)
-            
-            You can find the source and contribute [here](https://github.com/PHANzgz/MXC-utilities).  
-            
-            Special thanks to @Midir21, @TavernSideGaming, @Mlazear and @Monok who have actively or passively
-            contributed to the project.
-            """
-            )
+    st.sidebar.title("About")
+    st.sidebar.info(
+        """
+        This calculator was created by PHAN to help the community and it is ad-free
+        and open-source. If you want to support me, you can buy me some coffe here:   
+        ETH, MXC (ERC20 and BEP20): `0xEEBFbb5EF279dCBeAA3eEe505d1CefBA040FFD5a`  
+        DASH: `XeFNCe39ebB4vnruL1hwqsr57mHDqE8D9i`  
+        Paypal:  [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/donate?hosted_button_id=TX8C42JLJ27AC)
+        
+        You can find the source and contribute [here](https://github.com/PHANzgz/MXC-utilities).  
+        
+        Special thanks to @Midir21, @TavernSideGaming, @Mlazear and @Monok who have actively or passively
+        contributed to the project.
+        """
+        )
 
 
 if __name__ == "__main__":
