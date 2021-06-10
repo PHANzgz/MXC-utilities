@@ -5,9 +5,10 @@ import streamlit_analytics
 import mining_calculator
 import mining_tutorial
 import next_steps
+import fuel_calculator
 
-PAGE_NAMES = ["Mining calculator", "Mining guide", "Next steps"]
-PAGE_SRCS = [mining_calculator, mining_tutorial, next_steps]
+PAGE_NAMES = ["Mining calculator", "Fuel calculator", "Next steps"]
+PAGE_SRCS = [mining_calculator, fuel_calculator, next_steps]
 
 st.set_page_config(page_title="DHX Mining calculator")
 

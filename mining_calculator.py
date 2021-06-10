@@ -23,7 +23,7 @@ def exp_regression(x, a, b):
 def write(state):
 
     # Query API if enough time has passed
-    print("-"*50)
+    #print("-"*50)
     t_state, mxc_price_state, dhx_price_state = state
     t = time.time()
     if (t - t_state) > (10*60):
