@@ -94,7 +94,7 @@ def write(state):
         """.format(withdraw_date.strftime("%B %d, %Y"), percentage_withdrawn, mxc_withdrawn, mxc_withdrawn*mxc_price))
 
         st.info("""
-            Until further confirmation from the team I assume fuel has a 90% weight on miner health and
+            Until further confirmation from the team I assume fuel has a 58% weight on miner health and
             miner health has a direct impact on base rewards(i.e. 50% miner health = 50% base rewards)
         """)
 
@@ -122,7 +122,7 @@ def write(state):
             if date_ix == withdraw_date_ix:
                 miner_fuel_i -= miner_fuel_i*percentage_withdrawn/100
 
-            miner_health_i = 0.1 + 0.9*(miner_fuel_i/tank_capacity_i) # Uptime at full percent considered
+            miner_health_i = (1.-0.58) + 0.58*(miner_fuel_i/tank_capacity_i) # Uptime at full percent considered
 
             miner_fuel_v.append(miner_fuel_i)
             miner_health_v.append(miner_health_i)
