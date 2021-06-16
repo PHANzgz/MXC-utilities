@@ -122,7 +122,7 @@ def write(state):
             if date_ix == withdraw_date_ix:
                 miner_fuel_i -= miner_fuel_i*percentage_withdrawn/100
 
-            miner_health_i = (1.-0.58) + 0.58*(miner_fuel_i/tank_capacity_i) # Uptime at full percent considered
+            miner_health_i = 0.5 + 0.50*(miner_fuel_i/tank_capacity_i) # Uptime at full percent considered
 
             miner_fuel_v.append(miner_fuel_i)
             miner_health_v.append(miner_health_i)
